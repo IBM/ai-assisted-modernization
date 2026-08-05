@@ -1,0 +1,75 @@
+#!/usr/bin/env node
+const neo4j = require('neo4j-driver');
+
+const uri = process.env.NEO4J_URI || 'neo4j://localhost:7687';
+const username = process.env.NEO4J_USERNAME || 'neo4j';
+const password = process.env.NEO4J_PASSWORD || 'passw0rd';
+const database = process.env.NEO4J_DATABASE || 'neo4j';
+
+const driver = neo4j.driver(uri, neo4j.auth.basic(username, password));
+
+async function executeCypher(query, params = {}) {
+  const session = driver.session({ database });
+  try {
+    const result = await session.run(query, params);
+    return result.records.map(record => record.toObject());
+  } finally {
+    await session.close();
+  }
+}
+
+async function getSchema() {
+  const session = driver.session({ database });
+  try {
+    const labels = await session.run('CALL db.labels()');
+    const relTypes = await session.run('CALL db.relationshipTypes()');
+    return {
+      node_labels: labels.records.map(r => r.get(0)),
+      relationship_types: relTypes.records.map(r => r.get(0))
+    };
+  } finally {
+    await session.close();
+  }
+}
+
+// Simple stdio-based MCP protocol
+process.stdin.setEncoding('utf8');
+let buffer = '';
+
+process.stdin.on('data', async (chunk) => {
+  buffer += chunk;
+  const lines = buffer.split('\n');
+  buffer = lines.pop();
+  
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    try {
+      const request = JSON.parse(line);
+      let result;
+      
+      if (request.method === 'tools/list') {
+        result = {
+          tools: [
+            { name: 'write-cypher', description: 'Execute write query', inputSchema: { type: 'object', properties: { query: { type: 'string' }, params: { type: 'object' } }, required: ['query'] } },
+            { name: 'read-cypher', description: 'Execute read query', inputSchema: { type: 'object', properties: { query: { type: 'string' }, params: { type: 'object' } }, required: ['query'] } },
+            { name: 'get-schema', description: 'Get schema', inputSchema: { type: 'object', properties: {} } }
+          ]
+        };
+      } else if (request.method === 'tools/call') {
+        const { name, arguments: args } = request.params;
+        if (name === 'get-schema') {
+          result = { content: [{ type: 'text', text: JSON.stringify(await getSchema(), null, 2) }] };
+        } else if (name === 'write-cypher' || name === 'read-cypher') {
+          const data = await executeCypher(args.query, args.params);
+          result = { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
+        }
+      }
+      
+      process.stdout.write(JSON.stringify({ jsonrpc: '2.0', id: request.id, result }) + '\n');
+    } catch (error) {
+      process.stdout.write(JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32603, message: error.message } }) + '\n');
+    }
+  }
+});
+
+console.error('Neo4j MCP Server started');
