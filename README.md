@@ -1,59 +1,85 @@
-<!-- This should be the location of the title of the repository, normally the short name -->
-# repo-template
+# AI-Assisted Modernization
 
 <!-- Build Status, is a great thing to have at the top of your repository, it shows that you take your CI/CD as first class citizens -->
 <!-- [![Build Status](https://travis-ci.org/jjasghar/ibm-cloud-cli.svg?branch=master)](https://travis-ci.org/jjasghar/ibm-cloud-cli) -->
 
-<!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
 ## Scope
 
-The purpose of this project is to provide a template for new open source repositories.
+The purpose of this project is to provide an AI-assisted brownfield modernization workflow that combines context engineering, reusable AI skills, MCP servers, and IBM Bob to help modernize monolithic applications into microservices.
 
-<!-- A more detailed Usage or detailed explaination of the repository here -->
-## Usage
+## Overview
 
-This repository contains some example best practices for open source repositories:
+This platform provides:
 
-* [LICENSE](LICENSE)
-* [README.md](README.md)
-* [CONTRIBUTING.md](CONTRIBUTING.md)
-* [MAINTAINERS.md](MAINTAINERS.md)
-* [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-<!-- A Changelog allows you to track major changes and things that happen, https://github.com/github-changelog-generator/github-changelog-generator can help automate the process -->
-* [CHANGELOG.md](CHANGELOG.md)
+- **MCP Servers**: Model Context Protocol servers that expose contextual knowledge to IBM Bob
+  - Neo4j MCP server for knowledge graph operations
+  - MinIO MCP server for artifact storage operations
 
-> These are optional
+- **AI Skills**: Reusable skills that guide each stage of the modernization workflow
+  - Application Discovery skill for analyzing monolithic applications
+  - Microservices Architect skill for identifying bounded contexts and candidate microservices
+  - Microservices Designer skill for generating design artifacts
+  - Microservices Developer skill for implementing production-ready microservices
 
-<!-- The following are OPTIONAL, but strongly suggested to have in your repository. -->
-* [dco.yml](.github/dco.yml) - This enables DCO bot for you, please take a look https://github.com/probot/dco for more details.
-* [travis.yml](.travis.yml) - This is a example `.travis.yml`, please take a look https://docs.travis-ci.com/user/tutorial/ for more details.
+## Repository Structure
 
-These may be copied into a new or existing project to make it easier for developers not on a project team to collaborate.
+This repository contains the following documentation and resources:
 
-<!-- A notes section is useful for anything that isn't covered in the Usage or Scope. Like what we have below. -->
-## Notes
+* [LICENSE](LICENSE) - Apache 2.0 License
+* [README.md](README.md) - This file
+* [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+* [MAINTAINERS.md](MAINTAINERS.md) - Project maintainers
+* [CHANGELOG.md](CHANGELOG.md) - Version history and changes
 
-**NOTE: While this boilerplate project uses the Apache 2.0 license, when
-establishing a new repo using this template, please use the
-license that was approved for your project.**
+## Getting Started
 
-**NOTE: This repository has been configured with the [DCO bot](https://github.com/probot/dco).
-When you set up a new repository that uses the Apache license, you should
-use the DCO to manage contributions. The DCO bot will help enforce that.
-Please contact one of the IBM GH Org stewards.**
+### Prerequisites
 
-<!-- Questions can be useful but optional, this gives you a place to say, "This is how to contact this project maintainers or create PRs -->
-If you have any questions or issues you can create a new [issue here][issues].
+- Node.js 22 LTS or later
+- IBM Bob 2.0 or later
+- Neo4j Community Edition 5.26 LTS or later
+- MinIO Community Edition (latest version)
 
-Pull requests are very welcome! Make sure your patches are well tested.
-Ideally create a topic branch for every separate change you make. For
-example:
+### Installation
 
-1. Fork the repo
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/IBM/ai-assisted-modernization.git
+   cd ai-assisted-modernization
+   ```
+
+2. Install MCP server dependencies:
+   ```bash
+   # Neo4j MCP server
+   cd mcp-server/neo4j-mcp-server
+   npm install
+   
+   # MinIO MCP server
+   cd ../minio-mcp
+   npm install
+   npm run build
+   ```
+
+3. Configure the MCP servers in IBM Bob's `mcp-config.json` file with your Neo4j and MinIO credentials.
+
+4. Copy the AI skills from the `skills/` directory to your IBM Bob workspace `.bob/skills/` directory.
+
+For detailed setup instructions and usage, please refer to the accompanying tutorial documentation.
+
+## Contributing
+
+Pull requests are very welcome! Make sure your changes are well tested.
+
+Before contributing, please:
+
+1. Read the [CONTRIBUTING.md](CONTRIBUTING.md) file for detailed guidelines
+2. Fork the repo
+3. Create your feature branch (`git checkout -b feature/my-new-feature`)
+4. Commit your changes with sign-off (`git commit -s -m 'Add some feature'`)
+5. Push to the branch (`git push origin feature/my-new-feature`)
+6. Create a new Pull Request
+
+If you have any questions or issues, you can create a new [issue here](https://github.com/IBM/ai-assisted-modernization/issues/new).
 
 ## License
 
@@ -64,15 +90,15 @@ If you would like to see the detailed LICENSE click [here](LICENSE).
 
 ```text
 #
-# Copyright IBM Corp. {Year project was created} - {Current Year}
+# Copyright IBM Corp. 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 ```
+
+## Maintainers
+
+For the list of project maintainers, see [MAINTAINERS.md](MAINTAINERS.md).
+
 ## Authors
 
-Optionally, you may include a list of authors, though this is redundant with the built-in
-GitHub list of contributors.
-
-- Author: New OpenSource IBMer <new-opensource-ibmer@ibm.com>
-
-[issues]: https://github.com/IBM/repo-template/issues/new
+- Aditya Sengupta - aditseng@in.ibm.com
