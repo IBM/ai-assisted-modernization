@@ -1,5 +1,7 @@
 # MAINTAINERS
 
+Aditya Sengupta - aditseng@in.ibm.com
+
 Mo McElaney - mmcelaney@us.ibm.com
 
 JJ Asghar - jja@ibm.com
